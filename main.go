@@ -1,0 +1,251 @@
+package main
+
+import (
+	"fmt"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/files"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/termcolor"
+	"github.com/jenkins-x/jx-logging/v3/pkg/log"
+	"github.com/pkg/errors"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+)
+
+type ResourceSchema struct {
+	APIVersion string
+	Name       string
+	URL        string
+}
+
+var (
+	repos = map[string]string{
+		"jx-api": "https://github.com/jenkins-x/jx-api.git",
+	}
+
+	cloneRepositories = os.Getenv("JX_DISABLE_GIT_CLONE") != "true"
+
+	info = termcolor.ColorInfo
+
+	template = `
+## Jenkins X JSON Schema files
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
+### Schemas
+
+
+| API Version | Kind |
+| --- | --- |
+`
+)
+
+func main() {
+	o := &Options{}
+	if len(os.Args) > 1 {
+		o.Dir = os.Args[1]
+	}
+	err := o.Run()
+	if err != nil {
+		log.Logger().Errorf("failed: %v", err)
+		os.Exit(1)
+	}
+	log.Logger().Infof("completed the plugin generator")
+	os.Exit(0)
+}
+
+type Options struct {
+	Dir           string
+	WorkDir       string
+	GitClient     gitclient.Interface
+	CommandRunner cmdrunner.CommandRunner
+}
+
+func (o *Options) Run() error {
+	err := o.Validate()
+	if err != nil {
+		return errors.Wrapf(err, "failed to validate options")
+	}
+
+	err = o.cloneRepositories()
+	if err != nil {
+		return errors.Wrapf(err, "failed to clone plugins")
+	}
+
+	log.Logger().Infof("completed")
+	return nil
+}
+
+// Validate validates the setup
+func (o *Options) Validate() error {
+	if o.CommandRunner == nil {
+		o.CommandRunner = cmdrunner.QuietCommandRunner
+	}
+	if o.GitClient == nil {
+		o.GitClient = cli.NewCLIClient("", o.CommandRunner)
+	}
+	if o.Dir == "" {
+		o.Dir = "."
+	}
+	if o.WorkDir == "" {
+		o.WorkDir = filepath.Join(o.Dir, "jx-repos")
+	}
+	log.Logger().Infof("using directory %s", info(o.WorkDir))
+	err := os.MkdirAll(o.WorkDir, files.DefaultDirWritePermissions)
+	if err != nil {
+		return errors.Wrapf(err, "failed to create dir %s", o.WorkDir)
+	}
+	return nil
+}
+
+func (o *Options) cloneRepositories() error {
+	dir, err := filepath.Abs(o.WorkDir)
+	if err != nil {
+		return errors.Wrapf(err, "failed to get absolute dir of %s", o.WorkDir)
+	}
+
+	err = os.RemoveAll(dir)
+	if err != nil {
+		return errors.Wrapf(err, "failed to remove dir %s", dir)
+	}
+	err = os.MkdirAll(dir, files.DefaultDirWritePermissions)
+	if err != nil {
+		return errors.Wrapf(err, "failed to create dir %s", dir)
+	}
+
+	for n, u := range repos {
+		err := o.cloneRepository(n, u, dir)
+		if err != nil {
+			return errors.Wrapf(err, "failed to clone repository")
+		}
+	}
+
+	docsDir := filepath.Join(o.Dir, "docs")
+	err = gitclient.Add(o.GitClient, docsDir)
+	if err != nil {
+		return errors.Wrapf(err, "failed to add to git")
+	}
+
+	err = gitclient.CommitIfChanges(o.GitClient, docsDir, "chore: regenerate schema docs")
+	if err != nil {
+		return errors.Wrapf(err, "failed to commit changes")
+	}
+	return nil
+}
+
+func (o *Options) cloneRepository(name, gitURL, dir string) error {
+	if gitURL == "" {
+		log.Logger().Warnf("no clone URL for repository %s", name)
+		return nil
+	}
+
+	toDir := filepath.Join(dir, name)
+	err := os.MkdirAll(toDir, files.DefaultDirWritePermissions)
+	if err != nil {
+		return errors.Wrapf(err, "failed to create dir %s", toDir)
+	}
+
+	log.Logger().Infof("cloning plugin %s to %s ", info(name), info(toDir))
+	_, err = gitclient.CloneToDir(o.GitClient, gitURL, toDir)
+	if err != nil {
+		return errors.Wrapf(err, "failed to clone %s to %s", gitURL, toDir)
+	}
+
+	return o.generateDocs(toDir)
+}
+
+func (o *Options) generateDocs(toDir string) error {
+	log.Logger().Infof("reading %s", info(toDir))
+
+	dir := filepath.Join(toDir, "schema")
+	exists, err := files.DirExists(dir)
+	if err != nil {
+		return errors.Wrapf(err, "failed to check if schema dir exists %s", dir)
+	}
+	if !exists {
+		log.Logger().Warnf("no schema dir for repository")
+		return nil
+	}
+
+	var schemas []ResourceSchema
+
+	// lets iterate through all files for schema files..
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if info == nil || info.IsDir() {
+			return nil
+		}
+		if !strings.HasSuffix(path, ".json") {
+			return nil
+		}
+
+		rel, err := filepath.Rel(dir, path)
+		if err != nil {
+			return errors.Wrapf(err, "failed to get relative path of %s within %s", path, dir)
+		}
+
+		dest := filepath.Join(o.Dir, "docs", rel)
+		destDir := filepath.Dir(dest)
+		err = os.MkdirAll(destDir, files.DefaultDirWritePermissions)
+		if err != nil {
+			return errors.Wrapf(err, "failed to create dir %s", destDir)
+		}
+		err = files.CopyFile(path, dest)
+		if err != nil {
+			return errors.Wrapf(err, "failed to copy file %s to %s", path, dest)
+		}
+		log.Logger().Debugf("copied file %s", termcolor.ColorInfo(path))
+
+		relDir, relName := filepath.Split(rel)
+		relDir = strings.TrimSuffix(relDir, string(os.PathSeparator))
+
+		kindName := strings.TrimSuffix(relName, ".json")
+		kindName = strings.Title(stringhelpers.ToCamelCase(kindName))
+
+		schemas = append(schemas, ResourceSchema{
+			APIVersion: relDir,
+			Name:       kindName,
+			URL:        rel,
+		})
+		return nil
+	})
+	if err != nil {
+		return errors.Wrapf(err, "failed to copy schema files")
+	}
+
+	return o.generateIndex(schemas)
+}
+
+func (o *Options) generateIndex(schemas []ResourceSchema) error {
+	buf := &strings.Builder{}
+
+	sort.Slice(schemas, func(i, j int) bool {
+		s1 := schemas[i]
+		s2 := schemas[j]
+
+		if s1.APIVersion != s2.APIVersion {
+			return s1.APIVersion < s2.APIVersion
+		}
+		return s1.Name < s2.Name
+	})
+
+	buf.WriteString(template)
+	for _, s := range schemas {
+		buf.WriteString(fmt.Sprintf("| [%s](%s) | [%s](%s) |\n", s.APIVersion, s.APIVersion, s.Name, s.URL))
+	}
+
+	text := buf.String()
+
+	path := filepath.Join(o.Dir, "docs", "README.md")
+	err := ioutil.WriteFile(path, []byte(text), files.DefaultFileWritePermissions)
+	if err != nil {
+		return errors.Wrapf(err, "failed to save file %s", path)
+	}
+	log.Logger().Infof("created index file %s", info(path))
+	return nil
+}
