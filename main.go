@@ -67,6 +67,7 @@ func main() {
 type Options struct {
 	Dir           string
 	WorkDir       string
+	Schemas       []ResourceSchema
 	GitClient     gitclient.Interface
 	CommandRunner cmdrunner.CommandRunner
 }
@@ -80,6 +81,11 @@ func (o *Options) Run() error {
 	err = o.cloneRepositories()
 	if err != nil {
 		return errors.Wrapf(err, "failed to clone plugins")
+	}
+
+	err = o.generateIndex(o.Schemas)
+	if err != nil {
+		return errors.Wrapf(err, "failed to generate schema index")
 	}
 
 	log.Logger().Infof("completed")
@@ -181,8 +187,6 @@ func (o *Options) generateDocs(toDir string) error {
 		return nil
 	}
 
-	var schemas []ResourceSchema
-
 	// lets iterate through all files for schema files..
 	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info == nil || info.IsDir() {
@@ -215,7 +219,7 @@ func (o *Options) generateDocs(toDir string) error {
 		kindName := strings.TrimSuffix(relName, ".json")
 		kindName = strings.Title(stringhelpers.ToCamelCase(kindName))
 
-		schemas = append(schemas, ResourceSchema{
+		o.Schemas = append(o.Schemas, ResourceSchema{
 			APIVersion: relDir,
 			Name:       kindName,
 			URL:        rel,
@@ -225,8 +229,7 @@ func (o *Options) generateDocs(toDir string) error {
 	if err != nil {
 		return errors.Wrapf(err, "failed to copy schema files")
 	}
-
-	return o.generateIndex(schemas)
+	return nil
 }
 
 func (o *Options) generateIndex(schemas []ResourceSchema) error {
