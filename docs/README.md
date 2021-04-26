@@ -9,8 +9,4 @@
 
 | API Version | Kind |
 | --- | --- |
-| [core.jenkins-x.io/v4beta1](core.jenkins-x.io/v4beta1) | [Requirements](core.jenkins-x.io/v4beta1/requirements.json) |
-| [jenkins.io/v1](jenkins.io/v1) | [Environment](jenkins.io/v1/environment.json) |
-| [jenkins.io/v1](jenkins.io/v1) | [PipelineActivity](jenkins.io/v1/pipeline-activity.json) |
-| [jenkins.io/v1](jenkins.io/v1) | [Release](jenkins.io/v1/release.json) |
-| [jenkins.io/v1](jenkins.io/v1) | [SourceRepository](jenkins.io/v1/source-repository.json) |
+| [chart.jenkins-x.io/v1alpha1](chart.jenkins-x.io/v1alpha1) | [Chart](chart.jenkins-x.io/v1alpha1/chart.json) |

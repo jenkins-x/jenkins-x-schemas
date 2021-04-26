@@ -1,0 +1,305 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/Chart",
+  "definitions": {
+    "Chart": {
+      "properties": {
+        "annotations": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "apiVersion": {
+          "type": "string"
+        },
+        "clusterName": {
+          "type": "string"
+        },
+        "creationTimestamp": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/Time"
+        },
+        "deletionGracePeriodSeconds": {
+          "type": "integer"
+        },
+        "deletionTimestamp": {
+          "$ref": "#/definitions/Time"
+        },
+        "finalizers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "generateName": {
+          "type": "string"
+        },
+        "generation": {
+          "type": "integer"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "labels": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "managedFields": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/ManagedFieldsEntry"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "ownerReferences": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/OwnerReference"
+          },
+          "type": "array"
+        },
+        "resourceVersion": {
+          "type": "string"
+        },
+        "selfLink": {
+          "type": "string"
+        },
+        "spec": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/ChartSpec"
+        },
+        "status": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/ChartStatus"
+        },
+        "uid": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ChartSpec": {
+      "properties": {
+        "annotations": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "apiVersion": {
+          "type": "string"
+        },
+        "appVersion": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "dependencies": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/Dependency"
+          },
+          "type": "array"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "keywords": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kubeVersion": {
+          "type": "string"
+        },
+        "maintainers": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/Maintainer"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "tags": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ChartStatus": {
+      "properties": {
+        "deleted": {
+          "$ref": "#/definitions/Time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "firstDeployed": {
+          "$ref": "#/definitions/Time"
+        },
+        "lastDeployed": {
+          "$ref": "#/definitions/Time"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Dependency": {
+      "properties": {
+        "alias": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "import-values": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "FieldsV1": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Maintainer": {
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ManagedFieldsEntry": {
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "fieldsType": {
+          "type": "string"
+        },
+        "fieldsV1": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/FieldsV1"
+        },
+        "manager": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "time": {
+          "$ref": "#/definitions/Time"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "OwnerReference": {
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "blockOwnerDeletion": {
+          "type": "boolean"
+        },
+        "controller": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uid": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Time": {
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}
