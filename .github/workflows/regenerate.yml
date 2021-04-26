@@ -16,4 +16,4 @@ jobs:
         env:
           GIT_TOKEN: ${{ secrets.GIT_BOT_TOKEN }}
         with:
-          entrypoint: ./regen.sh
+          entrypoint: ./regenerate.sh
