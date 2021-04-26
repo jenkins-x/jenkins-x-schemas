@@ -126,13 +126,12 @@ func (o *Options) cloneRepositories() error {
 		}
 	}
 
-	docsDir := filepath.Join(o.Dir, "docs")
-	err = gitclient.Add(o.GitClient, docsDir)
+	err = gitclient.Add(o.GitClient, o.Dir, "docs")
 	if err != nil {
 		return errors.Wrapf(err, "failed to add to git")
 	}
 
-	err = gitclient.CommitIfChanges(o.GitClient, docsDir, "chore: regenerate schema docs")
+	err = gitclient.CommitIfChanges(o.GitClient, o.Dir, "chore: regenerate schema docs")
 	if err != nil {
 		return errors.Wrapf(err, "failed to commit changes")
 	}
