@@ -9,4 +9,4 @@
 
 | API Version | Kind |
 | --- | --- |
-| [chart.jenkins-x.io/v1alpha1](chart.jenkins-x.io/v1alpha1) | [Chart](chart.jenkins-x.io/v1alpha1/chart.json) |
+| [preview.jenkins.io/v1alpha1](preview.jenkins.io/v1alpha1) | [Preview](preview.jenkins.io/v1alpha1/preview.json) |
