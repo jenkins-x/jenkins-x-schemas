@@ -6,6 +6,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/files"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/giturl"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/stringhelpers"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/termcolor"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
@@ -24,8 +25,10 @@ type ResourceSchema struct {
 }
 
 var (
-	repos = map[string]string{
-		"jx-api": "https://github.com/jenkins-x/jx-api.git",
+	// repo the git repositories to clone to find the schema docs
+	repos = []string{
+		"https://github.com/jenkins-x/jx-api",
+		"https://github.com/jenkins-x-plugins/jx-charter",
 	}
 
 	cloneRepositories = os.Getenv("JX_DISABLE_GIT_CLONE") != "true"
@@ -119,8 +122,13 @@ func (o *Options) cloneRepositories() error {
 		return errors.Wrapf(err, "failed to create dir %s", dir)
 	}
 
-	for n, u := range repos {
-		err := o.cloneRepository(n, u, dir)
+	for _, u := range repos {
+		gitInfo, err := giturl.ParseGitURL(u)
+		if err != nil {
+			return errors.Wrapf(err, "failed to parse git URL %s", u)
+		}
+		n := gitInfo.Name
+		err = o.cloneRepository(n, u, dir)
 		if err != nil {
 			return errors.Wrapf(err, "failed to clone repository")
 		}
