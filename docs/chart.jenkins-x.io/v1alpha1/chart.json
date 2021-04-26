@@ -149,6 +149,12 @@
         "name": {
           "type": "string"
         },
+        "repositoryName": {
+          "type": "string"
+        },
+        "repositoryUrl": {
+          "type": "string"
+        },
         "sources": {
           "items": {
             "type": "string"
