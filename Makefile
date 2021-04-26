@@ -132,6 +132,10 @@ darwin: ## Build for OSX
 .PHONY: release
 release: clean linux test
 
+.PHONY: regen
+regen: build
+	build/$(NAME)
+
 release-all: release linux win darwin
 
 promoter:

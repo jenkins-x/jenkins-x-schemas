@@ -29,6 +29,7 @@ var (
 	repos = []string{
 		"https://github.com/jenkins-x/jx-api",
 		"https://github.com/jenkins-x-plugins/jx-charter",
+		"https://github.com/jenkins-x-plugins/jx-preview",
 	}
 
 	cloneRepositories = os.Getenv("JX_DISABLE_GIT_CLONE") != "true"
