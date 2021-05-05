@@ -240,6 +240,22 @@ func (o *Options) generateDocs(toDir string) error {
 func (o *Options) generateKubevalFiles(schemas []ResourceSchema) error {
 	for _, sch := range schemas {
 		log.Logger().Infof("schema %#v", sch)
+
+		paths := strings.Split(sch.APIVersion, "/")
+		if len(paths) < 2 {
+			log.Logger().Infof("ignoring schema version with no version %s", sch.APIVersion)
+			continue
+		}
+		names := strings.Split(paths[0], ".")
+		name := names[0]
+		version := paths[len(paths)-1]
+		dest := filepath.Join(o.Dir, "docs", strings.ToLower(sch.Name)+"-"+name+"-"+version+".json")
+		src := filepath.Join(o.Dir, "docs", sch.URL)
+
+		err = files.CopyFile(src, dest)
+		if err != nil {
+			return errors.Wrapf(err, "failed to copy %s to %s", src, dest)
+		}
 	}
 	return nil
 }
