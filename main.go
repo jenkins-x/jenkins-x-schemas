@@ -25,6 +25,8 @@ type ResourceSchema struct {
 }
 
 var (
+	defaultKubevalVersion = "v1.18.1-standalone"
+
 	// repo the git repositories to clone to find the schema docs
 	repos = []string{
 		"https://github.com/jenkins-x/jx-api",
@@ -65,11 +67,12 @@ func main() {
 }
 
 type Options struct {
-	Dir           string
-	WorkDir       string
-	Schemas       []ResourceSchema
-	GitClient     gitclient.Interface
-	CommandRunner cmdrunner.CommandRunner
+	Dir            string
+	WorkDir        string
+	KubeValVersion string
+	Schemas        []ResourceSchema
+	GitClient      gitclient.Interface
+	CommandRunner  cmdrunner.CommandRunner
 }
 
 func (o *Options) Run() error {
@@ -105,6 +108,12 @@ func (o *Options) Validate() error {
 	}
 	if o.WorkDir == "" {
 		o.WorkDir = filepath.Join(o.Dir, "jx-repos")
+	}
+	if o.KubeValVersion == "" {
+		o.KubeValVersion = os.Getenv("KUBEVAL_VERSION")
+		if o.KubeValVersion == "" {
+			o.KubeValVersion = defaultKubevalVersion
+		}
 	}
 	log.Logger().Infof("using directory %s", info(o.WorkDir))
 	err := os.MkdirAll(o.WorkDir, files.DefaultDirWritePermissions)
@@ -249,7 +258,7 @@ func (o *Options) generateKubevalFiles(schemas []ResourceSchema) error {
 		names := strings.Split(paths[0], ".")
 		name := names[0]
 		version := paths[len(paths)-1]
-		dest := filepath.Join(o.Dir, "docs", strings.ToLower(sch.Name)+"-"+name+"-"+version+".json")
+		dest := filepath.Join(o.Dir, "docs", o.KubeValVersion, strings.ToLower(sch.Name)+"-"+name+"-"+version+".json")
 		src := filepath.Join(o.Dir, "docs", sch.URL)
 
 		err := files.CopyFile(src, dest)
