@@ -83,11 +83,6 @@ func (o *Options) Run() error {
 		return errors.Wrapf(err, "failed to clone plugins")
 	}
 
-	err = o.generateKubevalFiles(o.Schemas)
-	if err != nil {
-		return errors.Wrapf(err, "failed to generate kubeval files")
-	}
-
 	err = o.generateIndex(o.Schemas)
 	if err != nil {
 		return errors.Wrapf(err, "failed to generate schema index")
@@ -144,6 +139,11 @@ func (o *Options) cloneRepositories() error {
 		if err != nil {
 			return errors.Wrapf(err, "failed to clone repository")
 		}
+	}
+
+	err = o.generateKubevalFiles(o.Schemas)
+	if err != nil {
+		return errors.Wrapf(err, "failed to generate kubeval files")
 	}
 
 	err = gitclient.Add(o.GitClient, o.Dir, "docs")
@@ -252,7 +252,7 @@ func (o *Options) generateKubevalFiles(schemas []ResourceSchema) error {
 		dest := filepath.Join(o.Dir, "docs", strings.ToLower(sch.Name)+"-"+name+"-"+version+".json")
 		src := filepath.Join(o.Dir, "docs", sch.URL)
 
-		err = files.CopyFile(src, dest)
+		err := files.CopyFile(src, dest)
 		if err != nil {
 			return errors.Wrapf(err, "failed to copy %s to %s", src, dest)
 		}
