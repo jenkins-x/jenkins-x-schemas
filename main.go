@@ -83,6 +83,11 @@ func (o *Options) Run() error {
 		return errors.Wrapf(err, "failed to clone plugins")
 	}
 
+	err = o.generateKubevalFiles(o.Schemas)
+	if err != nil {
+		return errors.Wrapf(err, "failed to generate kubeval files")
+	}
+
 	err = o.generateIndex(o.Schemas)
 	if err != nil {
 		return errors.Wrapf(err, "failed to generate schema index")
@@ -228,6 +233,13 @@ func (o *Options) generateDocs(toDir string) error {
 	})
 	if err != nil {
 		return errors.Wrapf(err, "failed to copy schema files")
+	}
+	return nil
+}
+
+func (o *Options) generateKubevalFiles(schemas []ResourceSchema) error {
+	for _, sch := range schemas {
+		log.Logger().Infof("schema %#v", sch)
 	}
 	return nil
 }
