@@ -258,17 +258,20 @@ func (o *Options) generateKubevalFiles(schemas []ResourceSchema) error {
 		names := strings.Split(paths[0], ".")
 		name := names[0]
 		version := paths[len(paths)-1]
-		destDir := filepath.Join(o.Dir, "docs", o.KubeValVersion)
-		err := os.MkdirAll(destDir, files.DefaultDirWritePermissions)
-		if err != nil {
-			return errors.Wrapf(err, "failed to create dir %s", destDir)
-		}
+		kubevalVersions := []string{o.KubeValVersion, o.KubeValVersion + "-strict"}
+		for _, kubevalVersion := range kubevalVersions {
+			destDir := filepath.Join(o.Dir, "docs", kubevalVersion)
+			err := os.MkdirAll(destDir, files.DefaultDirWritePermissions)
+			if err != nil {
+				return errors.Wrapf(err, "failed to create dir %s", destDir)
+			}
 
-		dest := filepath.Join(destDir, strings.ToLower(sch.Name)+"-"+name+"-"+version+".json")
-		src := filepath.Join(o.Dir, "docs", sch.URL)
-		err = files.CopyFile(src, dest)
-		if err != nil {
-			return errors.Wrapf(err, "failed to copy %s to %s", src, dest)
+			dest := filepath.Join(destDir, strings.ToLower(sch.Name)+"-"+name+"-"+version+".json")
+			src := filepath.Join(o.Dir, "docs", sch.URL)
+			err = files.CopyFile(src, dest)
+			if err != nil {
+				return errors.Wrapf(err, "failed to copy %s to %s", src, dest)
+			}
 		}
 	}
 	return nil
