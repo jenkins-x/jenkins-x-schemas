@@ -15,4 +15,7 @@
 | [jenkins.io/v1](jenkins.io/v1) | [PipelineActivity](jenkins.io/v1/pipeline-activity.json) |
 | [jenkins.io/v1](jenkins.io/v1) | [Release](jenkins.io/v1/release.json) |
 | [jenkins.io/v1](jenkins.io/v1) | [SourceRepository](jenkins.io/v1/source-repository.json) |
+| [kubernetes-client.io/v1](kubernetes-client.io/v1) | [Externalsecrets](kubernetes-client.io/v1/externalsecrets.json) |
 | [preview.jenkins.io/v1alpha1](preview.jenkins.io/v1alpha1) | [Preview](preview.jenkins.io/v1alpha1/preview.json) |
+| [secret.jenkins-x.io/v1alpha1](secret.jenkins-x.io/v1alpha1) | [Schemas](secret.jenkins-x.io/v1alpha1/schemas.json) |
+| [secret.jenkins-x.io/v1alpha1](secret.jenkins-x.io/v1alpha1) | [Secretmappings](secret.jenkins-x.io/v1alpha1/secretmappings.json) |
