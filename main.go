@@ -32,6 +32,7 @@ var (
 		"https://github.com/jenkins-x/jx-api",
 		"https://github.com/jenkins-x-plugins/jx-charter",
 		"https://github.com/jenkins-x-plugins/jx-preview",
+		"https://github.com/jenkins-x-plugins/jx-secret",
 	}
 
 	cloneRepositories = os.Getenv("JX_DISABLE_GIT_CLONE") != "true"
