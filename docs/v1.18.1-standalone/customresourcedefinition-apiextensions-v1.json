@@ -1,0 +1,694 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/CustomResourceDefinition",
+  "definitions": {
+    "CustomResourceColumnDefinition": {
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "jsonPath": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceConversion": {
+      "properties": {
+        "strategy": {
+          "type": "string"
+        },
+        "webhook": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/WebhookConversion"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceDefinition": {
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "metadata": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/ObjectMeta"
+        },
+        "spec": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceDefinitionSpec"
+        },
+        "status": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceDefinitionStatus"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceDefinitionCondition": {
+      "properties": {
+        "lastTransitionTime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "message": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceDefinitionNames": {
+      "properties": {
+        "categories": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "listKind": {
+          "type": "string"
+        },
+        "plural": {
+          "type": "string"
+        },
+        "shortNames": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "singular": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceDefinitionSpec": {
+      "properties": {
+        "conversion": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceConversion"
+        },
+        "group": {
+          "type": "string"
+        },
+        "names": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceDefinitionNames"
+        },
+        "preserveUnknownFields": {
+          "type": "boolean"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "versions": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/CustomResourceDefinitionVersion"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceDefinitionStatus": {
+      "properties": {
+        "acceptedNames": {
+          "$ref": "#/definitions/CustomResourceDefinitionNames"
+        },
+        "conditions": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/CustomResourceDefinitionCondition"
+          },
+          "type": "array"
+        },
+        "storedVersions": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceDefinitionVersion": {
+      "properties": {
+        "additionalPrinterColumns": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/CustomResourceColumnDefinition"
+          },
+          "type": "array"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "deprecationWarning": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceValidation"
+        },
+        "served": {
+          "type": "boolean"
+        },
+        "storage": {
+          "type": "boolean"
+        },
+        "subresources": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceSubresources"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceSubresourceScale": {
+      "properties": {
+        "labelSelectorPath": {
+          "type": "string"
+        },
+        "specReplicasPath": {
+          "type": "string"
+        },
+        "statusReplicasPath": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceSubresourceStatus": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceSubresources": {
+      "properties": {
+        "scale": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceSubresourceScale"
+        },
+        "status": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CustomResourceSubresourceStatus"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CustomResourceValidation": {
+      "properties": {
+        "openAPIV3Schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/JSONSchemaProps"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ExternalDocumentation": {
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "FieldsV1": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "JSON": {
+      "properties": {
+        "Raw": {
+          "type": "string",
+          "media": {
+            "binaryEncoding": "base64"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "JSONSchemaProps": {
+      "properties": {
+        "$ref": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        },
+        "additionalItems": {
+          "$ref": "#/definitions/JSONSchemaPropsOrBool"
+        },
+        "additionalProperties": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/JSONSchemaPropsOrBool"
+        },
+        "allOf": {
+          "items": {
+            "$ref": "#/definitions/JSONSchemaProps"
+          },
+          "type": "array"
+        },
+        "anyOf": {
+          "items": {
+            "$ref": "#/definitions/JSONSchemaProps"
+          },
+          "type": "array"
+        },
+        "default": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/JSON"
+        },
+        "definitions": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/JSONSchemaProps"
+            }
+          },
+          "type": "object"
+        },
+        "dependencies": {
+          "patternProperties": {
+            ".*": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "$ref": "#/definitions/JSONSchemaPropsOrStringArray"
+            }
+          },
+          "type": "object"
+        },
+        "description": {
+          "type": "string"
+        },
+        "enum": {
+          "items": {
+            "$ref": "#/definitions/JSON"
+          },
+          "type": "array"
+        },
+        "example": {
+          "$ref": "#/definitions/JSON"
+        },
+        "exclusiveMaximum": {
+          "type": "boolean"
+        },
+        "exclusiveMinimum": {
+          "type": "boolean"
+        },
+        "externalDocs": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/ExternalDocumentation"
+        },
+        "format": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "items": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/JSONSchemaPropsOrArray"
+        },
+        "maxItems": {
+          "type": "integer"
+        },
+        "maxLength": {
+          "type": "integer"
+        },
+        "maxProperties": {
+          "type": "integer"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "minItems": {
+          "type": "integer"
+        },
+        "minLength": {
+          "type": "integer"
+        },
+        "minProperties": {
+          "type": "integer"
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "multipleOf": {
+          "type": "number"
+        },
+        "not": {
+          "$ref": "#/definitions/JSONSchemaProps"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "oneOf": {
+          "items": {
+            "$ref": "#/definitions/JSONSchemaProps"
+          },
+          "type": "array"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "patternProperties": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/JSONSchemaProps"
+            }
+          },
+          "type": "object"
+        },
+        "properties": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/JSONSchemaProps"
+            }
+          },
+          "type": "object"
+        },
+        "required": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "uniqueItems": {
+          "type": "boolean"
+        },
+        "x-kubernetes-embedded-resource": {
+          "type": "boolean"
+        },
+        "x-kubernetes-int-or-string": {
+          "type": "boolean"
+        },
+        "x-kubernetes-list-map-keys": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "x-kubernetes-list-type": {
+          "type": "string"
+        },
+        "x-kubernetes-map-type": {
+          "type": "string"
+        },
+        "x-kubernetes-preserve-unknown-fields": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "JSONSchemaPropsOrArray": {
+      "properties": {
+        "JSONSchemas": {
+          "items": {
+            "$ref": "#/definitions/JSONSchemaProps"
+          },
+          "type": "array"
+        },
+        "Schema": {
+          "$ref": "#/definitions/JSONSchemaProps"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "JSONSchemaPropsOrBool": {
+      "properties": {
+        "Allows": {
+          "type": "boolean"
+        },
+        "Schema": {
+          "$ref": "#/definitions/JSONSchemaProps"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "JSONSchemaPropsOrStringArray": {
+      "properties": {
+        "Property": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "Schema": {
+          "$ref": "#/definitions/JSONSchemaProps"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ManagedFieldsEntry": {
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "fieldsType": {
+          "type": "string"
+        },
+        "fieldsV1": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/FieldsV1"
+        },
+        "manager": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "time": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ObjectMeta": {
+      "properties": {
+        "annotations": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "clusterName": {
+          "type": "string"
+        },
+        "creationTimestamp": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "deletionGracePeriodSeconds": {
+          "type": "integer"
+        },
+        "deletionTimestamp": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "finalizers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "generateName": {
+          "type": "string"
+        },
+        "generation": {
+          "type": "integer"
+        },
+        "labels": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "managedFields": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/ManagedFieldsEntry"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "ownerReferences": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/OwnerReference"
+          },
+          "type": "array"
+        },
+        "resourceVersion": {
+          "type": "string"
+        },
+        "selfLink": {
+          "type": "string"
+        },
+        "uid": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "OwnerReference": {
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "blockOwnerDeletion": {
+          "type": "boolean"
+        },
+        "controller": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uid": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ServiceReference": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Time": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "WebhookClientConfig": {
+      "properties": {
+        "caBundle": {
+          "type": "string",
+          "media": {
+            "binaryEncoding": "base64"
+          }
+        },
+        "service": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/ServiceReference"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "WebhookConversion": {
+      "properties": {
+        "clientConfig": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/WebhookClientConfig"
+        },
+        "conversionReviewVersions": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}
