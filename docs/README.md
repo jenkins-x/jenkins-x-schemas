@@ -9,6 +9,8 @@
 
 | API Version | Kind |
 | --- | --- |
+| [apiextensions.k8s.io/v1](apiextensions.k8s.io/v1) | [customresourcedefinition](apiextensions.k8s.io/v1/customresourcedefinition.json) |
+| [apiextensions.k8s.io/v1beta1](apiextensions.k8s.io/v1beta1) | [customresourcedefinition](apiextensions.k8s.io/v1beta1/customresourcedefinition.json) |
 | [chart.jenkins-x.io/v1alpha1](chart.jenkins-x.io/v1alpha1) | [Chart](chart.jenkins-x.io/v1alpha1/chart.json) |
 | [core.jenkins-x.io/v4beta1](core.jenkins-x.io/v4beta1) | [Requirements](core.jenkins-x.io/v4beta1/requirements.json) |
 | [jenkins.io/v1](jenkins.io/v1) | [Environment](jenkins.io/v1/environment.json) |
