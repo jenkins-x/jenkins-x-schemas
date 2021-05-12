@@ -55,7 +55,7 @@ var (
 | --- | --- |
 `
 
-	resourceKinds = []schemagen.ResourceKind{
+	customSchemaKinds = []schemagen.ResourceKind{
 		{
 			APIVersion: "apiextensions.k8s.io/v1",
 			Name:       "customresourcedefinition",
@@ -146,13 +146,22 @@ func (o *Options) Validate() error {
 }
 
 func (o *Options) createCustomSchemas() error {
-	err := schemagen.GenerateSchemas(resourceKinds, "docs")
+	err := schemagen.GenerateSchemas(customSchemaKinds, "docs")
 	if err != nil {
 		if err != nil {
 			return errors.Wrapf(err, "failed to create the custom schemas")
 		}
 	}
 	log.Logger().Infof("generated the custom schemasr")
+
+	for _, rk := range customSchemaKinds {
+		rel := filepath.Join(rk.APIVersion, rk.Name+".json")
+		o.Schemas = append(o.Schemas, ResourceSchema{
+			APIVersion: rk.APIVersion,
+			Name:       rk.Name,
+			URL:        rel,
+		})
+	}
 	return nil
 }
 
