@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/jenkins-x/jx-api/v4/pkg/schemagen"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/files"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
@@ -12,6 +13,8 @@ import (
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/pkg/errors"
 	"io/ioutil"
+	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
 	"os"
 	"path/filepath"
 	"sort"
@@ -51,6 +54,19 @@ var (
 | API Version | Kind |
 | --- | --- |
 `
+
+	resourceKinds = []schemagen.ResourceKind{
+		{
+			APIVersion: "apiextensions.k8s.io/v1",
+			Name:       "customresourcedefinition",
+			Resource:   &v1.CustomResourceDefinition{},
+		},
+		{
+			APIVersion: "apiextensions.k8s.io/v1beta1",
+			Name:       "customresourcedefinition",
+			Resource:   &v1beta1.CustomResourceDefinition{},
+		},
+	}
 )
 
 func main() {
@@ -80,6 +96,11 @@ func (o *Options) Run() error {
 	err := o.Validate()
 	if err != nil {
 		return errors.Wrapf(err, "failed to validate options")
+	}
+
+	err = o.createCustomSchemas()
+	if err != nil {
+		return errors.Wrapf(err, "failed to create custom schemas")
 	}
 
 	err = o.cloneRepositories()
@@ -121,6 +142,17 @@ func (o *Options) Validate() error {
 	if err != nil {
 		return errors.Wrapf(err, "failed to create dir %s", o.WorkDir)
 	}
+	return nil
+}
+
+func (o *Options) createCustomSchemas() error {
+	err := schemagen.GenerateSchemas(resourceKinds, "docs")
+	if err != nil {
+		if err != nil {
+			return errors.Wrapf(err, "failed to create the custom schemas")
+		}
+	}
+	log.Logger().Infof("generated the custom schemasr")
 	return nil
 }
 
